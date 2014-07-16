@@ -5,17 +5,9 @@
 #include "functions.h"
 
 #define PATH_CONTEXT "data\\context.ctx"
-/*#define RESET_SCORE*/
 
 int main(int ac, char **av)
 {
-#ifdef RESET_SCORE
-    FILE *file_best_score = fopen("data\\b_s.bin", "wb+");
-    int n = 0;
-    rewind(file_best_score);
-    fwrite(&n, sizeof(int), 1, file_best_score);
-    fclose(file_best_score);
-#else
     struct context_t context;
     if(load_context(&context, PATH_CONTEXT) == 0)
     {
@@ -24,14 +16,16 @@ int main(int ac, char **av)
     }
     srand((unsigned int)time(NULL));
 
-    SDL_EnableKeyRepeat(0, 0);
     play(&context);
-    SDL_SaveBMP(context.screen, "data\\last_screen.bmp");
+	/*when game is over, player may keep a screenshot of his game*/
+    ask_for_screenshot(&context);
 
+	/*then free memory*/
     free_context(&context);
     SDL_Delay(500);
-#endif
+	/*and quit*/
     return EXIT_SUCCESS;
+	/*hack to avoid warnings from gcc because of unused variables*/
     (void)ac;
     (void)av;
 }

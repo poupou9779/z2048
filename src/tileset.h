@@ -4,23 +4,52 @@
 #include <SDL/SDL.h>
 
 #define LEN_MAX 128
+/*comment characters in tileset and context files*/
 #define COMMENT_CHAR '#'
 
 struct tileset_t
 {
+	/*path to the image*/
 	char path[LEN_MAX];
+	/*surface of the image*/
 	SDL_Surface *im;
+	/*dimensions of the tileset (in tiles)*/
 	int nb_tiles_w,
 		nb_tiles_h;
+	/*tab with position of each tile on the image*/
 	SDL_Rect *tab_pos;
+	/*tab with a (1 or 0) value that tells if this tile is submitted to collisions (not used here)*/
 	SDL_bool *tab_coll;
 };
 
+/**
+IN :
+	- f is the file that is being read
+	- buffer is the string which contains the first non-commented line read
+	- buffer_length is used to avoid SEGFAULT errors
+OUT :
+	- nothing
+*/
 void get_non_commented_line(FILE *f, char *buffer, int buffer_length);
 
+/**
+IN :
+	- tileset is the struct which is filled
+	- path is the path to the image
+OUT :
+	- 0 if failed
+	- 1 if succeeded
+*/
+int load_tileset(struct tileset_t *tileset, const char *path);
+
+/**
+IN :
+	- tileset is the struct which is freed
+OUT :
+	- nothing
+*/
 void free_tileset(struct tileset_t *tileset);
 
-int load_tileset(struct tileset_t *tileset, const char *path);
 /** THE FILE IN path MUST BE A *.tst FILE WITH :
 <nb_tiles_w> <nb_tiles_h>
 <path> #less than 128 characters in path !
