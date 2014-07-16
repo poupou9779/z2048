@@ -14,6 +14,7 @@ struct context_t
         best_score,
         nb_cells_w,
         nb_cells_h;
+    SDL_bool has_reached_max;
 };
 
 int load_context(struct context_t *context, const char *path_tielset);

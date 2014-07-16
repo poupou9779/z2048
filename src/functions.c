@@ -1,4 +1,5 @@
 #include "functions.h"
+#include <time.h>
 
 #define NEW_CELL_VALUE 1
 
@@ -32,11 +33,77 @@ void generate_new_cell(struct context_t *context, int value)
     context->board[y][x] = value;
 }
 
-SDL_bool isover(const struct context_t *context)
+int get_max_value(const struct context_t *context)
+{
+    int i, j,
+        max_value = 0;
+    for(i = 0; i < context->nb_cells_h; ++i)
+        for(j = 0; j < context->nb_cells_w; ++j)
+            if(max_value < context->board[i][j])
+                max_value = context->board[i][j];
+    return max_value;
+}
+
+void ask_for_screenshot(struct context_t *context)
+{
+    time_t timestamp = time(NULL);
+    char buffer_title[LEN_MAX];
+    SDL_Event ev;
+    SDL_bool _loop = SDL_TRUE;
+
+    SDL_WM_SetCaption("Press Y if you want to make a screenshot and N if you don't", NULL);
+    do
+    {
+        do
+            SDL_WaitEvent(&ev);
+        while(ev.type != SDL_KEYDOWN);
+        if(ev.key.keysym.sym == SDLK_y)
+        {
+            sprintf(buffer_title, "data\\z2048 - last screen [%d].bmp", (int)timestamp);
+            SDL_SaveBMP(context->screen, buffer_title);
+            _loop = SDL_FALSE;
+        }
+        if(ev.key.keysym.sym == SDLK_n)
+            _loop = SDL_FALSE;
+    } while(_loop);
+}
+
+SDL_bool check_if_max(struct context_t *context)
+{
+    SDL_Event e;
+    SDL_bool _loop = SDL_TRUE,
+             ret = SDL_FALSE;
+    if(get_max_value(context) == MAX_VALUE && !context->has_reached_max)
+    {
+        context->has_reached_max = SDL_TRUE;
+        SDL_WM_SetCaption("You have reached " MAX_VALUE_STRING ", do you want to continue ? (q) to quit OR (c) to continue",  NULL);
+        do
+        {
+            do
+                SDL_WaitEvent(&e);
+            while(e.type != SDL_KEYDOWN);
+            if(e.key.keysym.sym == SDLK_q)
+            {
+                ret = SDL_TRUE;
+                _loop = SDL_FALSE;
+            }
+            else if(e.key.keysym.sym == SDLK_c)
+            {
+                _loop = SDL_FALSE;
+                ask_for_screenshot(context);
+            }
+        }while(_loop);
+    }
+    return ret;
+}
+
+SDL_bool isover(struct context_t *context)
 {
     int i, j, k,
-        vx[] = {-1,  0,  0, +1,},
-        vy[] = { 0, -1, +1,  0};
+        vx[4] = {-1,  0,  0, +1,},
+        vy[4] = { 0, -1, +1,  0};
+    if(check_if_max(context))
+        return SDL_TRUE;
     for(i = 0; i < context->nb_cells_h; ++i)
         for(j = 0; j < context->nb_cells_w; ++j)
             if(context->board[i][j] == (context->tileset.nb_tiles_w*context->tileset.nb_tiles_h)-1)
@@ -65,7 +132,7 @@ int play(struct context_t *context)
     generate_new_cell(context, NEW_CELL_VALUE);
     do
     {
-        sprintf(title, "SDL_z2048\t : current score : %d           best score : %d", context->score, MAX(context->best_score, context->score));
+        sprintf(title, "SDL_z2048\t : score : %d     best score : %d", context->score, MAX(context->best_score, context->score));
         SDL_WM_SetCaption(title, NULL);
         blit_all(context);
         SDL_Flip(context->screen);

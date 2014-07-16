@@ -13,6 +13,7 @@ int load_context(struct context_t *context, const char *path_context)
         context->board[i] = malloc(sizeof(**context->board)*context->nb_cells_w);
     if(load_tileset(&context->tileset, path_tileset) == 0)
         return 0;
+    context->has_reached_max = SDL_FALSE;
     context->screen = SDL_SetVideoMode(context->nb_cells_w*context->tileset.tab_pos[0].w,
                                        context->nb_cells_h*context->tileset.tab_pos[0].h,
                                        32,

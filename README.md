@@ -4,5 +4,4 @@ z2048 is an adaptation of the well known application for smartphones and tablet 
 
 ## TODO
 
-- when player does 2048 on a cell, ask if he wants to keep playing or not
-- fix the quit problem
+- comment code
