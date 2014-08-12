@@ -2,6 +2,7 @@
 #include <string.h>
 #include <stdio.h>
 
+/*explicit enough*/
 void get_non_commented_line(FILE *f, char *buffer, int buffer_length)
 {
     char *tmp;
@@ -11,6 +12,7 @@ void get_non_commented_line(FILE *f, char *buffer, int buffer_length)
 	if(strrchr(buffer, '\n') != NULL)
         *strrchr(buffer, '\n') = '\0';
 }
+
 
 int load_tileset(struct tileset_t *tileset, const char *path)
 {
@@ -82,6 +84,7 @@ int load_tileset(struct tileset_t *tileset, const char *path)
 	return 1;
 }
 
+/*explicit enough*/
 void free_tileset(struct tileset_t *tileset)
 {
     SDL_FreeSurface(tileset->im);
