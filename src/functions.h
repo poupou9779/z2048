@@ -3,6 +3,7 @@
 
 #include "context.h"
 
+#define PROBABILITY_4 10 /*10%*/
 #define EMPTY_CELL 0
 
 void blit_all(struct context_t *context);

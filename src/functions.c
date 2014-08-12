@@ -1,6 +1,7 @@
 #include "functions.h"
 
-#define NEW_CELL_VALUE 1
+#define NEW_CELL_VALUE_2 1
+#define NEW_CELL_VALUE_4 2
 
 #define MAX(a, b) (((a) > (b)) ? (a) : (b))
 
@@ -62,7 +63,7 @@ int play(struct context_t *context)
     FILE *file_best_score = fopen("data\\b_s.bin", "rb+");
     int best_score_tmp;
     SDL_Event e;
-    generate_new_cell(context, NEW_CELL_VALUE);
+    generate_new_cell(context, rand()%100 < PROBABILITY_4 ? NEW_CELL_VALUE_4 : NEW_CELL_VALUE_2);
     do
     {
         sprintf(title, "SDL_z2048\t : current score : %d           best score : %d", context->score, MAX(context->best_score, context->score));
@@ -82,7 +83,7 @@ int play(struct context_t *context)
         blit_all(context);
         SDL_Flip(context->screen);
         SDL_Delay(50);
-        generate_new_cell(context, NEW_CELL_VALUE);
+        generate_new_cell(context, rand()%100 < PROBABILITY_4 ? NEW_CELL_VALUE_4 : NEW_CELL_VALUE_2);
     } while(!isover(context));
     blit_all(context);
     SDL_Flip(context->screen);
