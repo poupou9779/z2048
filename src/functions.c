@@ -1,8 +1,7 @@
 #include "functions.h"
 #include <time.h>
 
-#define NEW_CELL_VALUE_2 1
-#define NEW_CELL_VALUE_4 2
+#define NEW_CELL_VALUE(n) i_log2(n)
 
 #define MAX(a, b) (((a) > (b)) ? (a) : (b))
 
@@ -146,12 +145,8 @@ int play(struct context_t *context)
     FILE *file_best_score = fopen("data\\b_s.bin", "rb+");
     int best_score_tmp;
     SDL_Event e;
-<<<<<<< HEAD
-    generate_new_cell(context, rand()%100 < PROBABILITY_4 ? NEW_CELL_VALUE_4 : NEW_CELL_VALUE_2);
-=======
+    generate_new_cell(context, rand()%100 < PROBABILITY_4 ? NEW_CELL_VALUE(4) : NEW_CELL_VALUE(2));
 	/*the game has to start with at least one busy cell*/
-    generate_new_cell(context, NEW_CELL_VALUE);
->>>>>>> 79fb0a6524fcab703b411a6ed0809bc8b4c22bc5
     do
     {
 		/*update title with current and best scores*/
@@ -178,12 +173,8 @@ int play(struct context_t *context)
         SDL_Flip(context->screen);
 		/*wait 50 miliseconds between each turn to get a bit slower*/
         SDL_Delay(50);
-<<<<<<< HEAD
-        generate_new_cell(context, rand()%100 < PROBABILITY_4 ? NEW_CELL_VALUE_4 : NEW_CELL_VALUE_2);
-=======
+        generate_new_cell(context, rand()%100 < PROBABILITY_4 ? NEW_CELL_VALUE(4) : NEW_CELL_VALUE(2));
 		/*the new cell has to be generated just before the board is checked otherwise function may be bugged*/
-        generate_new_cell(context, NEW_CELL_VALUE);
->>>>>>> 79fb0a6524fcab703b411a6ed0809bc8b4c22bc5
     } while(!isover(context));
 	/*update screen when player wins or looses*/
     blit_all(context);
@@ -277,3 +268,11 @@ int move(struct context_t *context, enum side_e direction)
     return n_moves;
 }
 
+int i_log2(int n)
+{
+	int i;
+	for(i = 0; i < sizeof(n)*8; ++i)
+		if((n >> i) & 1)
+			return i;
+	return -1;
+}
